@@ -52,6 +52,21 @@ if(is_dir("$allsitesroot/$servername") || file_exists("$configroot/$servername.c
 }
 
 
+$aliases = [];
+$alias_response = "XXX";
+while(!empty($alias_response)){
+  echo colorize("Your hostname will be:   $servername", 'NOTE');
+  echo colorize("Enter an alias below, or press enter to continue.", 'NOTE');
+  echo "> ";
+  $alias_response = strtolower( trim(fgets($stdin)) );
+  if(!empty($alias_response))
+    $aliases[] = $alias_response;
+}
+$apache_aliases = [];
+foreach($aliases as $a){
+  $apache_aliases[] = "ServerAlias $a";
+}
+$apache_aliases = implode("\n", $apache_aliases). "\n";
 echo colorize("The site: $servername, will be created. CONTINUE? [yes/no]", 'NOTE');
 echo "> ";
 $confirm = strtolower( trim(fgets($stdin)) );
@@ -62,8 +77,7 @@ fclose($stdin);
 $configtemplate = '<VirtualHost *:80>
 
 ServerName {{servername}}:80
-ServerAlias www.{{servername}}
-ServerAlias {{servername}}.'.$basehostname.'
+'.$apache_aliases.'
 DocumentRoot '.$allsitesroot.'/{{servername}}/public_html
 ErrorLog /private/var/log/apache2/{{servername}}_error_log
 CustomLog /private/var/log/apache2/{{servername}}_access_log combined
@@ -82,8 +96,7 @@ DirectoryIndex index.html index.php index.htm
 <VirtualHost *:443>
 
 ServerName {{servername}}:443
-ServerAlias www.{{servername}}
-ServerAlias {{servername}}.'.$basehostname.'
+'.$apache_aliases.'
 DocumentRoot '.$allsitesroot.'/{{servername}}/public_html
 ErrorLog /private/var/log/apache2/{{servername}}_error_log
 CustomLog /private/var/log/apache2/{{servername}}_access_log combined
@@ -121,7 +134,7 @@ file_put_contents("$configroot/$servername.conf", $hostcontents);
 exec("ln -s $configroot/$servername.conf $allsitesroot/$servername/site.conf");
 
 exec("echo \"127.0.0.1     $servername\" | sudo tee -a /etc/hosts > /dev/null");
-// file_put_contents('/etc/hosts', "127.0.0.1    $servername\n", FILE_APPEND);
+
 
 exec('sudo apachectl restart');
 
