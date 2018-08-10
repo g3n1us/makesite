@@ -1,0 +1,6 @@
+{
+  "allsitesroot": "/srv",
+  "configroot": "/private/etc/apache2/other",
+  "publicdns": null
+}
+
