@@ -1,0 +1,26 @@
+{
+    "name": "g3n1us/makesite",
+    "type": "project",
+    "authors": [
+        {
+            "name": "Sean Bethel",
+            "email": "tech@americanmadeweb.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {
+        "laravel/valet": "dev-master"
+    },
+    "autoload": {
+        "psr-4": {
+            "G3n1us\\Makesite\\": "src/"
+        },
+        "files": [
+	        "helpers.php"
+        ]
+    },
+    "bin": [
+        "makesite",
+        "permit"
+    ]
+}

@@ -1,22 +1,5 @@
 #!/usr/bin/env php
 <?php
-
-/**
- * Load correct autoloader depending on install location.
- */
-if (file_exists(__DIR__.'/vendor/autoload.php')) {
-    require __DIR__.'/vendor/autoload.php';
-} elseif (file_exists(__DIR__.'/../../../autoload.php')) {
-    require __DIR__.'/../../../autoload.php';
-} else {
-    require getenv('HOME').'/.composer/vendor/autoload.php';
-}
-
-G3n1us\Makesite\Command::run($argv);
-
-
-dd('end');
-
 $helptext = "
 Usage: makesite [sitename]
 
@@ -167,3 +150,27 @@ exec("open http://$servername");
 	// copy to /etc/httpd/conf.d/*.conf
 
 
+function colorize($text, $status) {
+ $out = "";
+ switch($status) {
+  case "SUCCESS":
+   $out = "[32m"; //Green
+   break;
+  case "FAILURE":
+   $out = "[31m"; //Red
+   break;
+  case "WARNING":
+   $out = "[33m"; //Yellow
+   break;
+  case "NOTE":
+   $out = "[36m"; //Blue
+   break;
+  default:
+   throw new Exception("Invalid status: " . $status);
+ }
+ return chr(27) . "$out" . "$text" . chr(27) . "[0m" . PHP_EOL;
+}
+
+function clean($input){
+	return trim(preg_replace('/[^a-z0-9\-\.]/', '', strtolower(trim($input))), '-');
+}
