@@ -35,7 +35,7 @@ class Command{
 		$subdomain = (count($argv) === 2) ? $argv[1] : false;
 
 		// See if asking for help...
-		if(in_array($subdomain, ['-h', '--help'])) die(say($this->$helptext, "WARNING"));
+		if(in_array($subdomain, ['-h', '--help'])) die(say($this->helptext, "WARNING"));
 
 		if(in_array($subdomain, ['tld', 'TLD'])) die($this->setTld());
 
@@ -83,6 +83,9 @@ class Command{
 
 
 	public function _getTld(){
+		say("One or more configuration steps need to be set.");
+		say("The TLD is the main domain name that your sites will respond to. For example: if your TLD is google.com, all of your sites will be prefixed to this, such as mynewsite.google.com.");
+		say("You should choose something that is not a real domain name, otherwise you won't be able to access the real version of that domain.");
 		return $this->ask("What would you like your TLD to be?");
 	}
 
