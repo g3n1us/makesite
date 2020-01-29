@@ -29,15 +29,25 @@ class Command{
 
 	public function _run($argv){
 		Install::check();
-
-		if(count($argv) > 2) $this->error('Too many arguments!');
-
-		$subdomain = (count($argv) === 2) ? $argv[1] : false;
+		array_shift($argv);
+		$flags = [];
+		if(count($argv) > 1) {
+			$subdomain = array_pop($argv);
+			$flags = $argv;
+		}
+		else{
+			$subdomain = (count($argv) === 1) ? $argv[0] : false;
+		}
 
 		// See if asking for help...
-		if(in_array($subdomain, ['-h', '--help'])) die(say($this->helptext, "WARNING"));
+		if(!!array_intersect($flags, ['-h', '--help'])) die(say($this->helptext, "WARNING"));
 
-		if(in_array($subdomain, ['tld', 'TLD'])) die($this->setTld());
+		if(!!array_intersect($flags, ['tld', 'TLD'])) die($this->setTld());
+
+		if(!!array_intersect($flags, ['-d', '--delete'])) {
+			$this->delete($subdomain);
+			return;
+		}
 
 
 		if($subdomain == false) {
@@ -132,12 +142,13 @@ class Command{
 		if(is_dir($siteroot)){
 			$this->error("The site already exists!");
 		}
-		$this->confirm();
+		$hostname = $this->getServerName($subdomain);
+
+		$this->confirm("$hostname will be created. Continue?");
 		@mkdir("$siteroot/public_html", 0755, true);
 		file_put_contents("$siteroot/public_html/index.html", $this->tpl($this->startercontent, ['servername' => $subdomain]));
 		$configroot = $this->config('configroot');
 		$username = get_current_user();
-		$hostname = $this->getServerName($subdomain);
 		exec("sudo touch $configroot/$hostname.conf && sudo chown $username $configroot/$hostname.conf");
 		$hostcontents = $this->tpl($this->apache_template, [
 			'siteroot' => $siteroot,
@@ -146,7 +157,35 @@ class Command{
 		file_put_contents("$configroot/$hostname.conf", $hostcontents);
 		exec("ln -s $configroot/$hostname.conf $siteroot/site.conf");
 
-		exec("open http://$hostname");
+		exec("valet secure $subdomain");
+
+		say("$hostname has been created.", "SUCCESS");
+
+		exec("open https://$hostname");
+	}
+
+
+	private function _delete($subdomain){
+		$hostname = $this->getServerName($subdomain);
+		$this->confirm("$hostname will be permanently DELETED. Continue?");
+
+		$root = $this->getRoot();
+		$siteroot = "$root/$subdomain";
+		if(!is_dir($siteroot)){
+			$this->error("The site doesn't exist!");
+		}
+		$trash_path = getenv('HOME') . "/.Trash";
+		if(is_dir("$trash_path/$subdomain")) rename($siteroot, "$trash_path/$subdomain-" . time());
+		else rename($siteroot, "$trash_path/$subdomain");
+
+
+		$configroot = $this->config('configroot');
+
+		if(file_exists("$trash_path/$hostname.conf")) rename("$configroot/$hostname.conf", "$trash_path/$hostname.conf-" . time());
+		else rename("$configroot/$hostname.conf", "$trash_path/$hostname.conf");
+
+		exec("valet unsecure $subdomain");
+		say("$hostname has been deleted.", "SUCCESS");
 	}
 
 
