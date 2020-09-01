@@ -1,6 +1,6 @@
 {
-  "allsitesroot": "~/Documents/Sites",
-  "configroot": "/private/etc/apache2/other",
+  "allsitesroot": "~/Sites",
+  "configroot": "~/.config",
   "publicdns": null
 }
 
