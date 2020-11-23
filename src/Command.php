@@ -147,15 +147,16 @@ class Command{
 		$this->confirm("$hostname will be created. Continue?");
 		@mkdir("$siteroot/public_html", 0755, true);
 		file_put_contents("$siteroot/public_html/index.html", $this->tpl($this->startercontent, ['servername' => $subdomain]));
-		$configroot = $this->config('configroot');
+// 		$configroot = $this->config('configroot');
 		$username = get_current_user();
-		exec("sudo touch $configroot/$hostname.conf && sudo chown $username $configroot/$hostname.conf");
+// 		exec("sudo touch $configroot/$hostname.conf && sudo chown $username $configroot/$hostname.conf");
 		$hostcontents = $this->tpl($this->apache_template, [
 			'siteroot' => $siteroot,
 			'servername' => $hostname,
 		]);
-		file_put_contents("$configroot/$hostname.conf", $hostcontents);
-		exec("ln -s $configroot/$hostname.conf $siteroot/site.conf");
+		file_put_contents("$siteroot/site.conf", $hostcontents);
+// 		file_put_contents("$configroot/$hostname.conf", $hostcontents);
+// 		exec("ln -s $configroot/$hostname.conf $siteroot/site.conf");
 
 		// sudo virtualmin create-domain --domain data-commander.dev.also-too.com --parent dev.also-too.com  --web --ssl --mysql --dir --letsencrypt
 
@@ -181,10 +182,12 @@ class Command{
 		else rename($siteroot, "$trash_path/$subdomain");
 
 
-		$configroot = $this->config('configroot');
+// 		$configroot = $this->config('configroot');
 
+/*
 		if(file_exists("$trash_path/$hostname.conf")) rename("$configroot/$hostname.conf", "$trash_path/$hostname.conf-" . time());
 		else rename("$configroot/$hostname.conf", "$trash_path/$hostname.conf");
+*/
 
 		exec("valet unsecure $subdomain");
 		say("$hostname has been deleted.", "SUCCESS");
