@@ -157,6 +157,8 @@ class Command{
 		file_put_contents("$configroot/$hostname.conf", $hostcontents);
 		exec("ln -s $configroot/$hostname.conf $siteroot/site.conf");
 
+		// sudo virtualmin create-domain --domain data-commander.dev.also-too.com --parent dev.also-too.com  --web --ssl --mysql --dir --letsencrypt
+
 		exec("valet secure $subdomain");
 
 		say("$hostname has been created.", "SUCCESS");
