@@ -1,6 +1,6 @@
 {
   "name": "g3n1us/makesite",
-  "type": "project",
+  "type": "package",
   "authors": [
     {
       "name": "Sean Bethel",
