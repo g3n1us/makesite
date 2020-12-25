@@ -41,7 +41,7 @@ class Command{
 		// See if asking for help...
 		if(!!array_intersect($argv, ['-h', '--help'])) die(say($this->helptext, "WARNING"));
 
-		if(!!array_intersect($argv, ['tld', 'TLD'])) die($this->setTld());
+		if(!!array_intersect($argv, ['tld', 'TLD', '-tld'])) die($this->setTld());
 
 		if(!!array_intersect($flags, ['-d', '--delete'])) {
 			$this->delete($subdomain);
