@@ -9,16 +9,15 @@ class Install{
 	}
 
 	public static function check(){
-		$cli = @exec('valet -V 2> /dev/null');
-		if(empty($cli)){
-			say('Installing Valet...');
-			exec('composer global require laravel/valet');
-		}
-
+		$HOME = getenv('HOME');
+		say("Installing Valet...");
+		$cli = @exec('valet install');	
+		@exec('valet trust');	
+	
 		// look for config file
-		if(!file_exists(getenv('HOME')."/.config/makesite/config.json")){
-			@mkdir(getenv('HOME')."/.config/makesite");
-			copy(dirname(__DIR__)."/config.json.example", getenv('HOME')."/.config/makesite/config.json");
+		if(!file_exists("$HOME/.config/makesite/config.json")){
+			@mkdir("$HOME/.config/makesite");
+			copy(dirname(__DIR__)."/config.json.example", "$HOME/.config/makesite/config.json");
 		}
 
 		if(!Command::config('publicdns')){
@@ -32,8 +31,8 @@ class Install{
 			exec("cd \"$root\" && valet park");
 		}
 
-		if(!file_exists(getenv('HOME')."/.config/valet/Drivers/ApacheValetDriver.php")){
-			copy(dirname(__DIR__)."/ApacheValetDriver.php", getenv('HOME')."/.config/valet/Drivers/ApacheValetDriver.php");
+		if(!file_exists("$HOME/.config/valet/Drivers/ApacheValetDriver.php")){
+			copy(dirname(__DIR__)."/ApacheValetDriver.php", "$HOME/.config/valet/Drivers/ApacheValetDriver.php");
 		}
 
 	}

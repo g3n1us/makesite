@@ -28,7 +28,6 @@ class Command{
 	}
 
 	public function _run($argv){
-		Install::check();
 		array_shift($argv);
 		$flags = [];
 		if(count($argv) > 1) {
@@ -40,9 +39,9 @@ class Command{
 		}
 
 		// See if asking for help...
-		if(!!array_intersect($flags, ['-h', '--help'])) die(say($this->helptext, "WARNING"));
+		if(!!array_intersect($argv, ['-h', '--help'])) die(say($this->helptext, "WARNING"));
 
-		if(!!array_intersect($flags, ['tld', 'TLD'])) die($this->setTld());
+		if(!!array_intersect($argv, ['tld', 'TLD'])) die($this->setTld());
 
 		if(!!array_intersect($flags, ['-d', '--delete'])) {
 			$this->delete($subdomain);
@@ -147,18 +146,13 @@ class Command{
 		$this->confirm("$hostname will be created. Continue?");
 		@mkdir("$siteroot/public_html", 0755, true);
 		file_put_contents("$siteroot/public_html/index.html", $this->tpl($this->startercontent, ['servername' => $subdomain]));
-// 		$configroot = $this->config('configroot');
 		$username = get_current_user();
-// 		exec("sudo touch $configroot/$hostname.conf && sudo chown $username $configroot/$hostname.conf");
+
 		$hostcontents = $this->tpl($this->apache_template, [
 			'siteroot' => $siteroot,
 			'servername' => $hostname,
 		]);
 		file_put_contents("$siteroot/site.conf", $hostcontents);
-// 		file_put_contents("$configroot/$hostname.conf", $hostcontents);
-// 		exec("ln -s $configroot/$hostname.conf $siteroot/site.conf");
-
-		// sudo virtualmin create-domain --domain data-commander.dev.also-too.com --parent dev.also-too.com  --web --ssl --mysql --dir --letsencrypt
 
 		exec("valet secure $subdomain");
 
@@ -180,14 +174,6 @@ class Command{
 		$trash_path = getenv('HOME') . "/.Trash";
 		if(is_dir("$trash_path/$subdomain")) rename($siteroot, "$trash_path/$subdomain-" . time());
 		else rename($siteroot, "$trash_path/$subdomain");
-
-
-// 		$configroot = $this->config('configroot');
-
-/*
-		if(file_exists("$trash_path/$hostname.conf")) rename("$configroot/$hostname.conf", "$trash_path/$hostname.conf-" . time());
-		else rename("$configroot/$hostname.conf", "$trash_path/$hostname.conf");
-*/
 
 		exec("valet unsecure $subdomain");
 		say("$hostname has been deleted.", "SUCCESS");

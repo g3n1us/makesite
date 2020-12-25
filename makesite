@@ -12,5 +12,12 @@ if (file_exists(__DIR__.'/vendor/autoload.php')) {
     require getenv('HOME').'/.composer/vendor/autoload.php';
 }
 
-G3n1us\Makesite\Command::run($argv);
+if(@$argv[1] == 'install'){
+	G3n1us\Makesite\Install::check();
+}
+else{
+	G3n1us\Makesite\Command::run($argv);	
+}
+
+
 
