@@ -28,8 +28,9 @@ class Install{
 
 		if(!is_dir($root)){
 			@mkdir($root, 0755, true);
-			exec("cd \"$root\" && valet park");
 		}
+		
+		exec("cd \"$root\" && valet park");
 
 		if(!file_exists("$HOME/.config/valet/Drivers/ApacheValetDriver.php")){
 			copy(dirname(__DIR__)."/ApacheValetDriver.php", "$HOME/.config/valet/Drivers/ApacheValetDriver.php");
