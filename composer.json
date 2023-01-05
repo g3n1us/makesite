@@ -8,9 +8,8 @@
       "email": "tech@americanmadeweb.com"
     }
   ],
-  "minimum-stability": "dev",
   "require": {
-    "laravel/valet": "dev-master"
+    "laravel/valet": "~3.2"
   },
   "autoload": {
     "psr-4": {
