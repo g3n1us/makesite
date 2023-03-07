@@ -1,4 +1,7 @@
 <?php
+
+namespace Valet\Drivers;
+
 class ApacheValetDriver extends BasicValetDriver
 {
 
@@ -62,43 +65,6 @@ class ApacheValetDriver extends BasicValetDriver
     public function frontControllerPath($sitePath, $siteName, $uri)
     {
         return parent::frontControllerPath($this->getDocumentRoot($sitePath), $siteName, $uri);
-/*
-        dmp($a);
-
-        $apache_config = file_get_contents("$sitePath/site.conf");
-        $matched = preg_match("/DocumentRoot (.*?)$/m", $apache_config, $matches);
-        if($matched){
-            $frontPath = rtrim($matches[1]);
-            $matches = [];
-
-            if (preg_match('/^\/(.*?)\.php/', $uri, $matches)) {
-                $filename = $matches[0];
-                dmp($sitePath.$filename);
-                if (file_exists($sitePath.$filename) && ! is_dir($sitePath.$filename)) {
-                    $_SERVER['SCRIPT_FILENAME'] = $sitePath.$filename;
-                    $_SERVER['SCRIPT_NAME'] = $filename;
-                    return $sitePath.$filename;
-                }
-            }
-
-// return '/srv/ehris.seanbethel.com/public_html/embed/dashboard.php';
-dmp($frontPath.$uri);
-
-            $indexfiles_matched = preg_match("/DirectoryIndex (.*?)$/m", $apache_config, $matches2);
-            if($indexfiles_matched){
-                $indexes = explode(' ', $matches2[1]);
-            }
-            else $indexes = ['index.php', 'index.html'];
-
-            foreach($indexes as $index){
-                if(file_exists("$frontPath/$index")){
-                    return "$frontPath/$index";
-                }
-            }
-            return false;
-        }
-        return $sitePath.'/public/index.php';
-*/
     }
 
     private function trim_uri($uri){

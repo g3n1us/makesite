@@ -2,3 +2,4 @@ config.json
 
 /vendor/
 _TRASH
+.DS_Store
